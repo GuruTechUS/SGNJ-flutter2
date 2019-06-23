@@ -37,6 +37,7 @@ dependencies:
   url_launcher: ^5.0.2
   flutter_staggered_grid_view:
   photo_view: 
+  image_downloader: 0.9.2
 
 dev_dependencies:
   flutter_test:

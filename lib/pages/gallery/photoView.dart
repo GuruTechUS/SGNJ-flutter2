@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -35,7 +36,23 @@ class _PhotoViewerState extends State<PhotoViewer>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            tooltip: 'Delete',
+            onPressed: () {
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.file_download),
+            tooltip: 'Download',
+            onPressed: () {
+              downloadImageFile();
+            },
+          ),
+        ],
+      ),
       body: Container(
         decoration: BoxDecoration(
           color: Colors.black
@@ -79,4 +96,24 @@ class _PhotoViewerState extends State<PhotoViewer>{
             heroTag: widget.imagesList[index].documentID,
           );
   }
+
+  downloadImageFile() async {
+    try {
+      print("download start");
+      // Saved with this method.
+      print(widget.imagesList[currentIndex].data['url']);
+      var imageId =  await ImageDownloader.downloadImage(widget.imagesList[currentIndex].data['url']);
+      if (imageId == null) {
+        return;
+      } else if(imageId == true) {
+        print(imageId);
+        return;
+      }
+
+    } on Exception catch (error) {
+      print("download failed"); 
+      print(error);
+    }
+  }
+
 }
