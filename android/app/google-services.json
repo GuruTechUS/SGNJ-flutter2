@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1011412602625",
+    "firebase_url": "https://sgofnj.firebaseio.com",
+    "project_id": "sgofnj",
+    "storage_bucket": "sgofnj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1011412602625:android:ddd59a9cf03a9c82",
+        "android_client_info": {
+          "package_name": "com.sikhgamesofnj.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1011412602625-m7l939984khtcndfn4frsdf1am9qmtd2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sikhgamesofnj.app",
+            "certificate_hash": "089a46d03076eba87a4c4c9369c8cac83ad3b0c5"
+          }
+        },
+        {
+          "client_id": "1011412602625-6pk8mjmdevbp6v8ffq0edclr7pj83v31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPnYEKpsRv-fkHoG5z300KCYupA8Ih3NY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1011412602625-6pk8mjmdevbp6v8ffq0edclr7pj83v31.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1011412602625-9crp6tgkr1udhhrr21ebdoulvtllfcqj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sikhgamesofnj.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
