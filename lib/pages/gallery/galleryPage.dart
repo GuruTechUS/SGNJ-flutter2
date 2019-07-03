@@ -5,6 +5,7 @@ import 'package:firebase_app/pages/gallery/photoView.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Gallery extends StatefulWidget{
   
@@ -45,6 +46,16 @@ class _GalleryState extends State<Gallery>{
     return new Scaffold(
         appBar: new AppBar(
           title: new Text("Gallery"),
+          actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            tooltip: 'Add Photo',
+            onPressed: () {
+              //addPhoto();
+              //_optionsDialogBox();
+            },
+          )
+        ],
         ),
         body: wallpapersList != null
             ? new StaggeredGridView.countBuilder(
@@ -84,4 +95,49 @@ class _GalleryState extends State<Gallery>{
                 child: new CircularProgressIndicator(),
               ));
   }
+
+  /*
+  addPhoto(){
+    
+  }
+
+  Future<void> _optionsDialogBox() {
+    return showDialog(context: context,
+      builder: (BuildContext context) {
+          return AlertDialog(
+            content: new SingleChildScrollView(
+              child: new ListBody(
+                children: <Widget>[
+                  GestureDetector(
+                    child: new Text('Take a picture'),
+                    onTap: openCamera,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                  ),
+                  GestureDetector(
+                    child: new Text('Select from gallery'),
+                    onTap: openGallery,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      );
+  }
+  Future openCamera() async {
+    var picture = "openCamera";
+    //var picture = await ImagePicker.pickImage(source: ImageSource.camera);
+    print(picture);
+  }
+
+  Future openGallery() async {
+    //var picture = "openGallery";
+    var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
+    print(picture);
+  }
+
+  */
+  
 }

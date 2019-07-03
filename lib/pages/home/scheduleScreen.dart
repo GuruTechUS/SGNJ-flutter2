@@ -1,3 +1,5 @@
+import 'package:firebase_app/pages/home/addEvent.dart';
+import 'package:firebase_app/pages/home/eventDetails.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +38,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
   final dynamic category;
   final bool gender;
   String userId;
+  bool recordExist = false;
   
   Map<String, dynamic> subscription = new Map<String, dynamic>();
 
@@ -48,11 +51,11 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
     firebaseAnonAuth.signInAnon().then((user) {
       print("======1======");
       this.userId = user.uid;
-      fetchUserToken();
+      fetchUserPreferences();
     });
   }
 
-  fetchUserToken() async {
+  fetchUserPreferences() async {
     print("======3======");
       await fetchSubscriptionData();
   }
@@ -70,6 +73,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
       stream: Firestore.instance.collection("events")
                                 .where("category", isEqualTo: category["name"])
                                 .where("gender", isEqualTo: gender)
+                                .where("sport", isEqualTo: sportsItem["name"])
                                 .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if(!snapshot.hasData){
@@ -82,27 +86,44 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
     );
   }
 
-  getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
-    return snapshot.data.documents
-        .map((doc) => new ListTile(title: new Text(doc["category"]), subtitle: new Text(doc["gender"].toString())))
-        .toList();
-  }
-
   eventsList(AsyncSnapshot<QuerySnapshot> snapshot){
       return CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            expandedHeight: 100.0,
+            expandedHeight: 50.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              //background: Image.network("https://i.ibb.co/zNQkbJZ/gameday.png"),
               centerTitle: true,
-              title: Text('Schedule')
+              title: Text('Schedule'),
             ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                tooltip: 'Download',
+                onPressed: () {
+                  Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) =>
+                                     AddEvent(gender, sportsItem["name"], category["name"])));
+                  
+                },
+              ),
+            ],
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-              return Card(
+              return InkWell(
+                onTap: (){ 
+                  print("Card Clicked"); 
+                  Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) =>
+                                     EventDetails(userId, snapshot.data.documents[index].documentID, (gender==true?"Boys":"Girls") + " / "+ sportsItem["title"] + " / "+category["name"])));
+                      
+                },
+                child: Card(
                 child: new Container(
                   padding: EdgeInsets.all(10.0),
                   child: new Row(
@@ -136,7 +157,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
                     ],
                   )
                 ),
-              );
+              ));
             },
             childCount: snapshot.data.documents.length
             ),
@@ -262,7 +283,11 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
     } else {
       unSubscribeToTopic(key);
     }
-    subscriptionDocumentReference.updateData({key: !subscription[key]});
+    if(!recordExist){
+      subscriptionDocumentReference.setData({key: !subscription[key]});
+    } else {
+      subscriptionDocumentReference.updateData({key: !subscription[key]});
+    }
   }
 
   subscribeToTopic(key){
@@ -284,7 +309,12 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
       print("check: "+documentData.data.toString());
       if (!mounted) return;
       setState(() {
-        subscription = documentData.data;
+        if(documentData.data == null){
+          subscription = {};
+        } else {
+          subscription = documentData.data;
+          recordExist = true;
+        }
       });
     });   
   }

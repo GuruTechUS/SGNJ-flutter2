@@ -1,3 +1,6 @@
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
+import 'searchScreen.dart';
 import 'package:firebase_app/style/themeColor.dart';
 import 'package:firebase_app/utils/tab_indication_painter.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +17,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   
-  bool _gender = false;
+  bool _isSearchSelected = false;
   Color left = Colors.black;
   Color right = Colors.white;
 
@@ -22,32 +25,33 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    print("test");
     super.initState();
   }
 
-  
-    
-  
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(//SingleChildScrollView(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height >= 775.0
-            ? MediaQuery.of(context).size.height
-            : 775.0,
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-              colors: [ThemeColors.pageStart, ThemeColors.pageEnd],
-              begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(1.0, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
-        ),
-        child: Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
-          Row(
+    return staggeredView(context);
+  }
+
+  Widget staggeredView(BuildContext context){
+    return StaggeredGridView.count(
+      crossAxisCount: 1,
+      crossAxisSpacing: 10.0,
+      mainAxisSpacing: 10.0,
+      //padding: EdgeInsets.all(5.0),
+      children: <Widget>[
+        header(context),
+        homeBodyContent(context)
+        ],
+      staggeredTiles: [
+        StaggeredTile.extent(1, 110),
+        StaggeredTile.extent(1, MediaQuery.of(context).size.height - 120),
+      ],
+    );
+  }
+
+  header(BuildContext context){
+    return Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
@@ -59,14 +63,44 @@ class _MainScreenState extends State<MainScreen> {
                 child: _buildMenuBar(context),
               ),
             ],
-          ),
+          );
+  }
+
+  Widget homeBodyContent(BuildContext context) {
+    return SingleChildScrollView(//SingleChildScrollView(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height >= 650.0
+            ? MediaQuery.of(context).size.height
+            : 650.0,
+        decoration: new BoxDecoration(
+          gradient: new LinearGradient(
+              colors: [ThemeColors.pageStart, ThemeColors.pageEnd],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(1.0, 1.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max, 
+          children: <Widget>[
           Container(
-            child: _categoryList(context),
+            child: _isSearchSelected ? _searchScreen() : _categoryList(context),
           )
           
         ]),
       ),
     );
+  }
+
+  _searchScreen(){
+    return Container(
+      height: 60,
+      width: MediaQuery.of(context).size.width,
+      color: Colors.white54,
+      child: SearchScreen(),
+    );
+    //
   }
 
   Widget _categoryList(BuildContext context) {
@@ -135,6 +169,18 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildMenuBar(BuildContext context) {
+    var flatButton = FlatButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onPressed: _onHomSelected,
+                      child: Text(
+                        "Home",
+                        style: TextStyle(
+                            color: left,
+                            fontSize: 16.0,
+                            fontFamily: "WorkSansSemiBold"),
+                      ),
+                    );
     return Container(
         width: 200.0,
         height: 50.0,
@@ -145,32 +191,21 @@ class _MainScreenState extends State<MainScreen> {
         child: Column(
           children: <Widget>[
             CustomPaint(
-              painter: TabIndicationPainter(position: _gender),
+              painter: TabIndicationPainter(position: _isSearchSelected),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Expanded(
-                    child: FlatButton(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onPressed: _onGilrsSelected,
-                      child: Text(
-                        "Girls",
-                        style: TextStyle(
-                            color: left,
-                            fontSize: 16.0,
-                            fontFamily: "WorkSansSemiBold"),
-                      ),
-                    ),
+                    child: flatButton,
                   ),
                   //Container(height: 33.0, width: 1.0, color: Colors.white),
                   Expanded(
                     child: FlatButton(
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
-                      onPressed: _onBoysSelected,
+                      onPressed: _onSearchSelected,
                       child: Text(
-                        "Boys",
+                        "Search",
                         style: TextStyle(
                             color: right,
                             fontSize: 16.0,
@@ -185,17 +220,17 @@ class _MainScreenState extends State<MainScreen> {
         ));
   }
 
-  void _onGilrsSelected() {
+  void _onHomSelected() {
     setState(() {
-      this._gender = false;
+      this._isSearchSelected = false;
       this.left = Colors.black;
       this.right = Colors.white;
     });
   }
 
-  void _onBoysSelected() {
+  void _onSearchSelected() {
     setState(() {
-      this._gender = true;
+      this._isSearchSelected = true;
       this.right = Colors.black;
       this.left = Colors.white;
     });
