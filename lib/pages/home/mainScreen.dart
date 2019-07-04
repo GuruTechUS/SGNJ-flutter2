@@ -21,8 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   Color left = Colors.black;
   Color right = Colors.white;
 
-  String userId = "";
-
+  
   @override
   void initState() {
     super.initState();
@@ -45,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
       staggeredTiles: [
         StaggeredTile.extent(1, 110),
-        StaggeredTile.extent(1, MediaQuery.of(context).size.height - 120),
+        StaggeredTile.extent(1, MediaQuery.of(context).size.height - 220),
       ],
     );
   }
@@ -67,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget homeBodyContent(BuildContext context) {
-    return SingleChildScrollView(//SingleChildScrollView(
+    return _isSearchSelected ? _searchScreen() : SingleChildScrollView(//SingleChildScrollView(
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height >= 650.0
@@ -85,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
           mainAxisSize: MainAxisSize.max, 
           children: <Widget>[
           Container(
-            child: _isSearchSelected ? _searchScreen() : _categoryList(context),
+            child: _categoryList(context),
           )
           
         ]),
@@ -97,7 +96,6 @@ class _MainScreenState extends State<MainScreen> {
     return Container(
       height: 60,
       width: MediaQuery.of(context).size.width,
-      color: Colors.white54,
       child: SearchScreen(),
     );
     //

@@ -26,7 +26,7 @@ class _LinksState extends State<Links>{
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
         body: Center(
         child: linkList(context),
     ));
@@ -127,11 +127,11 @@ class _LinksState extends State<Links>{
   }
 
   _launchURL(url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
-}
 
 }

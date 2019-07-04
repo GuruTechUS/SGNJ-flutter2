@@ -47,16 +47,13 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
   FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
   
   _ScheduleScreenState(this.sportsItem, this.category, this.gender)  {
-    print("======0======");
     firebaseAnonAuth.signInAnon().then((user) {
-      print("======1======");
       this.userId = user.uid;
       fetchUserPreferences();
     });
   }
 
   fetchUserPreferences() async {
-    print("======3======");
       await fetchSubscriptionData();
   }
 
@@ -166,19 +163,28 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
       );
   }
 
+  
+
   displayTeams(teams) {
     if(teams != null && teams.length == 2){
       return Text(
         teams[0]["name"]+" vs "+teams[1]["name"],
         style: TextStyle(
             color: Colors.black,
-            fontSize: 24.0,
+            fontSize: 18.0,
             fontWeight: FontWeight.bold,
             fontFamily: "WorkSansSemiBold"
           )
         );
     } else if(teams != null && teams.length == 1){
-      return Text(teams[0]["name"]+" vs --");
+      return Text(
+        teams[0]["name"]+" vs --",
+        style: TextStyle(
+            color: Colors.black,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: "WorkSansSemiBold"
+          ));
     } else if(teams != null && teams.length >= 2){
       return Text("");
     } else {

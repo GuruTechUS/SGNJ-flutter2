@@ -53,7 +53,7 @@ class _AppNavBarState extends State<AppNavBar> {
           ],
           color: Colors.white,
           buttonBackgroundColor: Colors.white,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.black,
           animationCurve: Curves.easeInOut,
           animationDuration: Duration(milliseconds: 600),
           onTap: (index) {

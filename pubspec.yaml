@@ -68,6 +68,8 @@ flutter:
     - assets/images/notification.png
     - assets/images/placeholder.png
     - assets/images/no-updates.png
+    - assets/images/contact.png
+    - assets/images/call.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
