@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/utils/animated-count.dart';
+import 'package:firebase_app/utils/firebase_anon_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class EventDetails extends StatefulWidget{
 
   @override
   State<StatefulWidget> createState() {
-    return _EventDetailsState(this.userId, this.documentId);
+    return _EventDetailsState(this.documentId);
   }
 
 }
@@ -31,15 +32,37 @@ class _EventDetailsState extends State<EventDetails>{
   Map<String, dynamic> subscription = new Map<String, dynamic>();
   
   bool recordExist = false;
-  final String userId;
+  bool isAdminLoggedIn = false;
+  String userId;
   final String documentId;
 
   final _updatesFormKey = GlobalKey<FormState>();
   String statusUpdate = "";
   
+  final FirebaseAnonAuth firebaseAnonAuth = new FirebaseAnonAuth();
 
-  _EventDetailsState(this.userId, this.documentId){
-    fetchUserPreferences();
+
+  _EventDetailsState(this.documentId){
+    firebaseAnonAuth.isLoggedIn().then((user){
+      if(user != null && user.uid != null){
+        setState(() {
+          this.userId = user.uid;
+          if(user.isAnonymous == false){
+            isAdminLoggedIn = true;
+          }
+        });
+        fetchUserPreferences();
+      } else {
+        firebaseAnonAuth.signInAnon().then((anonUser) {
+          if(anonUser != null && anonUser.uid != null){
+            setState(() {
+              this.userId = anonUser.uid;
+            });
+            fetchUserPreferences();
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -57,9 +80,9 @@ class _EventDetailsState extends State<EventDetails>{
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-              IconButton(
+              isAdminLoggedIn ? IconButton(
                 icon: Icon(Icons.edit),
-                tooltip: 'Download',
+                tooltip: 'Edit',
                 onPressed: () {
                   Navigator.push(
                             context,
@@ -70,7 +93,7 @@ class _EventDetailsState extends State<EventDetails>{
                                 );
                   
                 },
-              ),
+              ) : Container(),
             ],
       ),
       body: Container(

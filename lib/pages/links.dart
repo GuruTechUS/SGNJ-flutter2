@@ -49,7 +49,7 @@ class _LinksState extends State<Links>{
       return CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            expandedHeight: 100.0,
+            expandedHeight: 46.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,

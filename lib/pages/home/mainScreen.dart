@@ -289,6 +289,7 @@ class _MainScreenState extends State<MainScreen> {
                 height: 180.0,
                 child: GridView.builder(
                     itemCount: categoryList.length,
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2),
                     itemBuilder: (BuildContext context, int index) {

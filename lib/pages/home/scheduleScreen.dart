@@ -39,7 +39,8 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
   final bool gender;
   String userId;
   bool recordExist = false;
-  
+  bool isAdminLoggedIn = false;
+
   Map<String, dynamic> subscription = new Map<String, dynamic>();
 
   final FirebaseAnonAuth firebaseAnonAuth = new FirebaseAnonAuth();
@@ -47,9 +48,26 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
   FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
   
   _ScheduleScreenState(this.sportsItem, this.category, this.gender)  {
-    firebaseAnonAuth.signInAnon().then((user) {
-      this.userId = user.uid;
-      fetchUserPreferences();
+    firebaseAnonAuth.isLoggedIn().then((user){
+      print(user);
+      if(user != null && user.uid != null){
+        setState(() {
+          this.userId = user.uid;
+          if(user.isAnonymous == false){
+            isAdminLoggedIn = true;
+          }
+        });
+        fetchUserPreferences();
+      } else {
+        firebaseAnonAuth.signInAnon().then((anonUser) {
+          if(anonUser != null && anonUser.uid != null){
+            setState(() {
+              this.userId = anonUser.uid;
+            });
+            fetchUserPreferences();
+          }
+        });
+      }
     });
   }
 
@@ -94,7 +112,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
               title: Text('Schedule'),
             ),
             actions: <Widget>[
-              IconButton(
+              isAdminLoggedIn ? IconButton(
                 icon: Icon(Icons.add),
                 tooltip: 'Download',
                 onPressed: () {
@@ -105,7 +123,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>{
                                      AddEvent(gender, sportsItem["name"], category["name"])));
                   
                 },
-              ),
+              ): Container(),
             ],
           ),
           SliverList(

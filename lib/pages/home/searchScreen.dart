@@ -25,6 +25,9 @@ class _SearchScreenState extends State<SearchScreen> {
   String searchSrting = "";
   String userId;
   bool recordExist = false;
+
+  bool isAdminLoggedIn = false;
+
   Stream<QuerySnapshot> eventStream = Firestore.instance.collection("events").snapshots();
 
   FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
@@ -34,9 +37,22 @@ class _SearchScreenState extends State<SearchScreen> {
   final FirebaseAnonAuth firebaseAnonAuth = new FirebaseAnonAuth();
 
   _SearchScreenState(){
-    firebaseAnonAuth.signInAnon().then((user) {
-      this.userId = user.uid;
-      fetchUserPreferences();
+    firebaseAnonAuth.isLoggedIn().then((user){
+      if(user != null && user.uid != null){
+        setState(() {
+          this.userId = user.uid;
+        });
+        fetchUserPreferences();
+      } else {
+        firebaseAnonAuth.signInAnon().then((anonUser) {
+          if(anonUser != null && anonUser.uid != null){
+            setState(() {
+              this.userId = anonUser.uid;
+            });
+            fetchUserPreferences();
+          }
+        });
+      }
     });
   }
 

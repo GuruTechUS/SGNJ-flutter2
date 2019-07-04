@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app/pages/gallery/photoView.dart';
+import 'package:firebase_app/utils/firebase_anon_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:image_picker/image_picker.dart';
+//import 'package:image_picker/image_picker.dart';
 
 class Gallery extends StatefulWidget{
   
@@ -24,6 +25,32 @@ class _GalleryState extends State<Gallery>{
   List<DocumentSnapshot> wallpapersList;
   final CollectionReference collectionReference =
       Firestore.instance.collection("gallery");
+
+  final FirebaseAnonAuth firebaseAnonAuth = new FirebaseAnonAuth();
+
+  String userId;
+  bool isAdminLoggedIn = false;
+
+  _GalleryState(){
+    firebaseAnonAuth.isLoggedIn().then((user){
+      if(user != null && user.uid != null){
+        setState(() {
+          this.userId = user.uid;
+          if(user.isAnonymous == false){
+            isAdminLoggedIn = true;
+          }
+        });
+      } else {
+        firebaseAnonAuth.signInAnon().then((anonUser) {
+          if(anonUser != null && anonUser.uid != null){
+            setState(() {
+              this.userId = anonUser.uid;
+            });
+          }
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -45,16 +72,18 @@ class _GalleryState extends State<Gallery>{
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Gallery"),
+          title:  Center(
+            child: Text("          Gallery")
+          ),
           actions: <Widget>[
-          IconButton(
+          isAdminLoggedIn ? IconButton(
             icon: Icon(Icons.add),
             tooltip: 'Add Photo',
             onPressed: () {
               //addPhoto();
               //_optionsDialogBox();
             },
-          )
+          ) : Container()
         ],
         ),
         body: wallpapersList != null
